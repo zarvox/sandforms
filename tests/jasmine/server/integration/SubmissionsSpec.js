@@ -9,17 +9,21 @@ describe("submissions", function() {
     ];
 
     Submissions.remove({});
-    Submissions.insert({ responses: [
-      { promptId: 'id-2', response: 'GGG Garfield'},
-      { promptId: 'id-1', response: 'ZZZ Orange'},
-      { promptId: 'id-3', response: 'AAA Maybe'}
-    ]});
+    Submissions.insert({ responses: {
+      'AAA What is your pets same?': 'ZZZ Orange',
+      'BBB Favorite color?': 'GGG Garfield',
+      'CCC Are you the NSA?': 'AAA Maybe'
+    }});
 
     // When
-    var answers = Submissions.inTableFormat(prompts);
+    var answers = Submissions.inTableFormat();
 
     // Then
-    expect(answers).toEqual([
+    expect(answers.headers).toEqual(
+      ['AAA What is your pets same?', 'BBB Favorite color?', 'CCC Are you the NSA?']
+    );
+
+    expect(answers.rows).toEqual([
       ['ZZZ Orange', 'GGG Garfield', 'AAA Maybe']
     ]);
   });
@@ -32,16 +36,16 @@ describe("submissions", function() {
     ];
 
     Submissions.remove({});
-    Submissions.insert({ responses: [
-      { promptId: 'id-1', response: 'Garfield'},
-    ]});
+    Submissions.insert({ responses:
+      { 'What is your pets name?': 'Garfield'},
+    });
 
     // When
-    var answers = Submissions.inTableFormat(prompts);
+    var answers = Submissions.inTableFormat();
 
     // Then
-    expect(answers).toEqual([
-      ['Garfield', '']
+    expect(answers.rows).toEqual([
+      ['Garfield']
     ]);
   });
 
@@ -52,9 +56,9 @@ describe("submissions", function() {
                                   "id-3,Garfield,,sleep\r\n";
 
     Submissions.remove({});
-    Submissions.insert({ _id: 'id-1', name: 'Garfield'});
-    Submissions.insert({ _id: 'id-2', name: 'Garfield', 'fav_food': 'lasagna'});
-    Submissions.insert({ _id: 'id-3', name: 'Garfield', activity: 'sleep'})
+    Submissions.insert({responses: { _id: 'id-1', name: 'Garfield'}});
+    Submissions.insert({responses: { _id: 'id-2', name: 'Garfield', 'fav_food': 'lasagna'}});
+    Submissions.insert({responses: { _id: 'id-3', name: 'Garfield', activity: 'sleep'}})
 
     var formattedString = Submissions.exportCsvFormattedString();
 

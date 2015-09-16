@@ -1,15 +1,14 @@
 <template name="responses">
-
   <h2 class="response-table__title page-header">Responses</h2>
   <button class="export-to-csv btn waves-effect waves-light">Export to CSV</button>
   <table class="response-table">
     <tr>
-      {{#each prompts this}}
-        <th class="response-table__headers">{{text}}</th>
+      {{#each responsesInOrder.headers}}
+        <th class="response-table__headers">{{ this }}</th>
       {{/each}}
     </tr>
 
-    {{#each responsesInOrder}}
+    {{#each responsesInOrder.rows}}
       <tr>
       {{#each this}}
         <td class="response-table__responses">{{this}}</td>
@@ -17,5 +16,4 @@
       </tr>
     {{/each}}
   </table>
-
 </template>

@@ -21,39 +21,46 @@ if (Meteor.isServer) {
   });
 }
 
-Submissions.inTableFormat = function(promptsInOrder) {
-  return Submissions.find().map(function(submission) {
-    var responsesInOrder = promptsInOrder.map(function(prompt) {
-      var responseForPrompt = _(submission.responses).find(function(response) {
-        return response.promptId === prompt._id;
-      });
+Submissions.inTableFormat = function() {
+  var headers = [],
+      rows = [];
 
-      if (responseForPrompt === undefined) {
-        return '';
-      } else {
-        return responseForPrompt.response;
-      }
+  Submissions.find().forEach(function(submission){
+    var row = [];
+
+    Object.keys(submission.responses).forEach(function(header){
+      if (headers.indexOf(header) === -1) { headers.push(header); }
     });
 
-    return responsesInOrder;
+    headers.forEach(function(header){
+      row.push(submission.responses[header]);
+    });
+
+    rows.push(row);
   });
+
+  if(headers.length === 0) { headers = Prompts.getPromptContent(); }
+
+  return {headers: headers, rows: rows};
 }
 
 Submissions.exportCsvFormattedString = function() {
   var parsedString = '',
       headers = [];
   Submissions.find().forEach(function(submission){
-    var row = []
+    var row = [];
 
-    Object.keys(submission).forEach(function(header){
-      if (headers.indexOf(header) === -1) { headers.push(header) }
+    Object.keys(submission.responses).forEach(function(header){
+      if (headers.indexOf(header) === -1) { headers.push(header); }
     });
 
     headers.forEach(function(header){
-      row.push(submission[header]);
+      row.push(submission.responses[header]);
     });
 
-    parsedString += row.join(',') + '\r\n';
+    if(row.length > 0){
+      parsedString += row.join(',') + '\r\n';
+    }
   });
   if(headers.length === 0) { headers = Prompts.getPromptContent(); }
 
