@@ -11,15 +11,14 @@ Template.submit.events({
 
   'submit form': function(e) {
     e.preventDefault();
-
-    var responses = Prompts.allPromptIds().map(function(id) {
-      return {
-        promptId: id,
-        response: $('#' + id).val()
-      }
+    var responseCollection = {};
+    Prompts.inOrder().map(function(prompt) {
+      var value = $('#' + prompt._id).val();
+      if(typeof value === "undefined") { value = '' };
+      responseCollection[prompt.text] = value;
     });
 
-    Submissions.insert({responses: responses});
+    Submissions.insert({responses: responseCollection});
 
     $('.response-input').val('');
     Session.set('submitted', true)
