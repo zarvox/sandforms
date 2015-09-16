@@ -39,7 +39,9 @@ Submissions.inTableFormat = function() {
     rows.push(row);
   });
 
-  if(headers.length === 0) { headers = Prompts.getPromptContent(); }
+  Prompts.getPromptContent().forEach(function(header){
+    if (headers.indexOf(header) === -1) { headers.push(header); }
+  });
 
   return {headers: headers, rows: rows};
 }
@@ -62,7 +64,10 @@ Submissions.exportCsvFormattedString = function() {
       parsedString += row.join(',') + '\r\n';
     }
   });
-  if(headers.length === 0) { headers = Prompts.getPromptContent(); }
+  
+  Prompts.getPromptContent().forEach(function(header){
+    if (headers.indexOf(header) === -1) { headers.push(header); }
+  });
 
   return headers.join(',') + '\r\n' + parsedString;
 };
